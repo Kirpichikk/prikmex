@@ -1,1 +1,1 @@
-# pricmex
+# prikmex
