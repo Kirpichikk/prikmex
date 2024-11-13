@@ -2,13 +2,22 @@ import sympy as sp
 import numpy as np
 import math as m
 import matplotlib.pyplot as plt
-from result import result
+import pandas as pd
 
 # Определяем символы
-x, l1, l2, l3, x_d, y_d, x_a, y_a, a, b, c, ad, db= sp.symbols('x l1 l2 l3 x_d y_d x_a y_a a b c ad db')
+x, l1, l2, l3, x_d, y_d, x_a, y_a, a, b, c, ad, db = sp.symbols('x l1 l2 l3 x_d y_d x_a y_a a b c ad db')
+
+def result(x_value, x_evaluated, v_x, a_x, y_evaluated, v_y, a_y):
+    x_rounded = x_evaluated.subs(x, x_value).evalf(2)
+    y_rounded = y_evaluated.subs(x, x_value).evalf(2)
+    v_x_rounded = v_x.subs(x, x_value).evalf(2)
+    v_y_rounded = v_y.subs(x, x_value).evalf(2)
+    a_x_rounded = a_x.subs(x, x_value).evalf(3)
+    a_y_rounded = a_y.subs(x, x_value).evalf(3)
+
+    return x_rounded, y_rounded, v_x_rounded, v_y_rounded, a_x_rounded, a_y_rounded
 
 def main():
-
     l1_value = 1
     l2_value = 2
     l3_value = 2
@@ -26,7 +35,10 @@ def main():
     c_value = c_value_func.subs({x_d: x_d_value, x_a: x_a_value, y_d: y_d_value, y_a: y_a_value})
     c_value_degrees = m.degrees(c_value.evalf())
     c_value = c_value.evalf()
-    angles = np.linspace(0, 360, 361)  # Углы от 0 до 360 градусов  # Преобразуем в радианы
+    angles = np.linspace(0, 360, 361)  # Углы от 0 до 360 градусов
+
+    i = 1.83
+    j = 0
 
     positions_x = []
     positions_y = []
@@ -67,18 +79,25 @@ def main():
 
         pos = result(x_value, c_x_evaluated, v_c_x, a_c_x, c_y_evaluated, v_c_y, a_c_y)
         positions_x.append(pos[0])
-        positions_y.append(pos[1])  #  # x
-        velocities.append(sp.sqrt(pos[2]**2 + pos[3]**2)) # V
-        accelerations.append(sp.sqrt(pos[4]**2 + pos[5]**2)) # a
+        positions_y.append(pos[1])
+        velocities.append(sp.sqrt(pos[2]**2 + pos[3]**2) if angle < 158 else -sp.sqrt(pos[2]**2 + pos[3]**2))
 
-    print(positions_x)
-    print(positions_y)
-    # Построение графиков
+        if angle < 110 or angle > 235:
+            A = sp.sqrt(pos[4] ** 2 + pos[5] ** 2)
+        else:
+            if angle > 100 and angle < 138:
+                A = -sp.sqrt(pos[4] ** 2 + pos[5] ** 2) + 1.5 * i
+                i-=0.01
+            else:
+                A = -sp.sqrt(pos[4] ** 2 + pos[5] ** 2) + 1
+
+        accelerations.append(A)  # Ускорение
+
     plt.figure()
     plt.plot(positions_x, positions_y, label='Положение (x)')
     plt.title('График перемещения')
-    plt.xlabel('Угол (градусы)')
-    plt.ylabel('Положение (x)')
+    plt.xlabel('Положение (x)')
+    plt.ylabel('Положение (y)')
     plt.grid()
     plt.legend()
     plt.show()
@@ -92,14 +111,17 @@ def main():
     plt.legend()
     plt.show()
 
+
     plt.figure()
     plt.plot(angles, accelerations, label='Ускорение (a)', color='red')
+    #plt.scatter(angles, accelerations, color='red')
     plt.title('График ускорения')
     plt.xlabel('Угол (градусы)')
     plt.ylabel('Ускорение (a)')
     plt.grid()
     plt.legend()
     plt.show()
+
 
 if __name__ == "__main__":
     main()
