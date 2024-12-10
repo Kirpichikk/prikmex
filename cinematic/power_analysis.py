@@ -2,7 +2,6 @@ import math
 import numpy as np
 import sympy as sp
 import matplotlib.pyplot as plt
-from statistics import mean
 
 
 def F(fi):
@@ -82,7 +81,7 @@ for fi in np.arange(-40 / 180 * math.pi + 2 * math.pi, 40 / 180 * math.pi + 2 * 
     e_x_rounded = e_x_evaluated.subs(x, fi).evalf(50)
     e_y_rounded = e_y_evaluated.subs(x, fi).evalf(50)
 
-    B = np.array([0., 0., 0., 0., -F(fi), -F(fi) * abs(x_k_value - e_x_rounded), 0., 0., 0.], dtype=np.float64)
+    B = np.array([0., 0., 0., 0., F(fi), -F(fi) * abs(x_k_value - e_x_rounded), 0., 0., 0.], dtype=np.float64)
     A = np.array([[1., 0., 1., 0., 0., 0., 0., 0., 0.],
                   [0., 1., 0., 1., 0., 0., 0., 0., 0.],
                   [abs(y_k_value - y_a_value), abs(x_k_value - x_a_value), abs(y_k_value - b_y_rounded),
@@ -95,20 +94,6 @@ for fi in np.arange(-40 / 180 * math.pi + 2 * math.pi, 40 / 180 * math.pi + 2 * 
                   [0., 0., 0., 0., 0., -1., 0., 1., 0.],
                   [0., 0., 0., 0., -abs(y_k_value - c_y_rounded), -abs(x_k_value - c_x_rounded),
                    abs(y_k_value - y_d_value), abs(x_k_value - x_d_value), 0.]], dtype=np.float64)
-    if fi == -40 / 180 * math.pi + 2 * math.pi:
-        D = np.array([0., 0., 0., 0., -F(fi), -F(fi) * abs(x_k_value - e_x_rounded), 0., 0., 0.])
-        C = np.array([[1., 0., 1., 0., 0., 0., 0., 0., 0.],
-                      [0., 1., 0., 1., 0., 0., 0., 0., 0.],
-                      [abs(y_k_value - y_a_value), abs(x_k_value - x_a_value), abs(y_k_value - b_y_rounded),
-                       abs(x_k_value - b_x_rounded), 0., 0., 0., 0., -1.],
-                      [0., 0., -1., 0., 1., 0., 0., 0., 0.],
-                      [0., 0., 0., -1., 0., 1., 0., 0., 0.],
-                      [0., 0., -abs(y_k_value - b_y_rounded), -abs(x_k_value - b_x_rounded),
-                       abs(y_k_value - c_y_rounded), abs(x_k_value - c_x_rounded), 0., 0., 0.],
-                      [0., 0., 0., 0., -1., 0., 1., 0., 0.],
-                      [0., 0., 0., 0., 0., -1., 0., 1., 0.],
-                      [0., 0., 0., 0., -abs(y_k_value - c_y_rounded), -abs(x_k_value - c_x_rounded),
-                       abs(y_k_value - y_d_value), abs(x_k_value - x_d_value), 0.]])
     solve = np.linalg.solve(A, B)
     all_solve.append(solve)
 print(all_solve[0])
@@ -132,51 +117,3 @@ for i in range(9):
 plt.legend()
 plt.show()
 
-'''all_solve2 = []
-w = 2.094
-m1 = 0.026
-m2 = 0.151
-m3 = 0.104
-g = 9.8
-
-for fi in np.arange(50 / 180 * math.pi, 130 / 180 * math.pi, 0.001):
-    f1x = AB / 2 * np.cos(fi) * w ** 2
-    f1y = AB / 2 * np.sin(fi) * w ** 2
-    g1 = m1 * g
-    f2x = BD / 2 * np.cos(fi2(fi) - math.pi) * w ** 2
-    f2y = BD / 2 * np.sin(fi2(fi) - math.pi) * w ** 2
-    g2 = m2 * g
-    B = np.array([-f1x, -f1y, - AB / 2 * np.sin(fi) * f1x - AB / 2 *
-                  np.cos(fi) * (f1y - g1), -F(fi) * np.cos(fi2(fi)) - f2x, -F(fi) *
-                  np.sin(fi2(fi)) - f2y, -BD * F(fi) - BD / 2 * np.sin(fi2(fi)) * f2x - BD /
-                  2 * np.cos(fi2(fi) * (f2y - g2)),
-                  0., 0., 0.])
-    A = np.array([[1., 0., 1., 0., 0., 0., 0., 0., 0.],
-                  [0., 1., 0., 1., 0., 0., 0., 0., 0.],
-                  [0., 0., AB * np.sin(fi), AB * np.cos(fi), 0., 0., 0., 1., 0.],
-                  [0., 0., -1., 0., 1., 0., 0., 0., 0.],
-                  [0., 0., 0., -1., 0., 1., 0., 0., 0.],
-                  [0., 0., 0., 0., -BC * np.sin(fi2(fi)), -BC * np.cos(fi2(fi)), 0., 0., 0.],
-                  [0., 0., 0., 0., -1., 0., 1., 0., 0.],
-                  [0., 0., 0., 0., 0., -1., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 1.]])
-    solve = np.linalg.solve(A, B)
-    all_solve2.append(solve)
-print(all_solve2[0])
-all_solve2 = np.transpose(all_solve2)
-R = ["Rx01", "Ry01", "Rx12", "Ry12", "Rx23", "Ry23", "Rn30", "M", "M30"]
-plt.figure(figsize=(8, 8))
-for i in range(9):
-    plt.subplot(3, 3, i + 1)
-    plt.plot(np.arange(50 / 180 * math.pi, 130 / 180 * math.pi, 0.001), all_solve[i])
-    plt.xlabel('fi')
-    plt.ylabel(R[i])
-    plt.grid(True)
-plt.tight_layout()
-rel_error = []
-rel_average = []
-for i in range(9):
-    rel_error.append(abs((all_solve[i] - all_solve2[i]) / all_solve2[i] * 100))
-    rel_average.append(mean(rel_error[-1]))
-print(rel_average)
-plt.show()'''
