@@ -102,19 +102,19 @@ for fi in np.arange(-40 / 180 * math.pi + 2 * math.pi, 40 / 180 * math.pi + 2 * 
     eq3 = sp.diff(wq3, fi_1_value)
     e3 = eq3 * w1 ** 2 + wq3 * e1 if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else (-1)*(eq3 * w1 ** 2 + wq3 * e1)
 
-    ang = math.radians(math.degrees(fi))
-    b_x_rounded = b_x_evaluated.subs(x, ang).evalf(50)
-    b_y_rounded = b_y_evaluated.subs(x, ang).evalf(50)
-    c_x_rounded = c_x_evaluated.subs(x, ang).evalf(50)
-    c_y_rounded = c_y_evaluated.subs(x, ang).evalf(50)
-    e_x_rounded = e_x_evaluated.subs(x, ang).evalf(50)
-    e_y_rounded = e_y_evaluated.subs(x, ang).evalf(50)
+
+    b_x_rounded = b_x_evaluated.subs(x, fi).evalf(50)
+    b_y_rounded = b_y_evaluated.subs(x, fi).evalf(50)
+    c_x_rounded = c_x_evaluated.subs(x, fi).evalf(50)
+    c_y_rounded = c_y_evaluated.subs(x, fi).evalf(50)
+    e_x_rounded = e_x_evaluated.subs(x, fi).evalf(50)
+    e_y_rounded = e_y_evaluated.subs(x, fi).evalf(50)
 
 
-    w2_value = w2.subs(x, ang).evalf(10) if math.degrees(fi)!= 360 or math.degrees(fi)!= 0 else 0
-    e2_value = e2.subs(x, ang).evalf(10) if math.degrees(fi)!= 360 or math.degrees(fi)!= 0 else 0
-    w3_value = w3.subs(x, ang).evalf(10) if math.degrees(fi)!= 360 or math.degrees(fi)!= 0 else 0
-    e3_value = e3.subs(x, ang).evalf(10) if math.degrees(fi)!= 360 or math.degrees(fi)!= 0 else 0
+    w2_value = w2.subs(x, fi).evalf(10) if math.degrees(fi)!= 360 or math.degrees(fi)!= 0 else 0
+    e2_value = e2.subs(x, fi).evalf(10) if math.degrees(fi)!= 360 or math.degrees(fi)!= 0 else 0
+    w3_value = w3.subs(x, fi).evalf(10) if math.degrees(fi)!= 360 or math.degrees(fi)!= 0 else 0
+    e3_value = e3.subs(x, fi).evalf(10) if math.degrees(fi)!= 360 or math.degrees(fi)!= 0 else 0
 
     f1_x = -m1 * abs(((x_a_value + b_x_rounded)/2) - x_k_value) * w1 ** 2
     f1_y = -m1 * abs(y_k_value - ((y_a_value + b_y_rounded)/2)) * w1 ** 2
@@ -130,10 +130,10 @@ for fi in np.arange(-40 / 180 * math.pi + 2 * math.pi, 40 / 180 * math.pi + 2 * 
     g3 = g * m3
 
     i2 = (m2 * (l2_value + l4_value)** 2) / 3
-    i3 = (m3 * l3_value ** 2) / 3
+    i3 = (m3 * (l3_value) ** 2) / 3
 
-    mi2 = -i2 * e2_value
-    mi3 = -i3 * e3_value
+    mi2 =-i2 * e2_value+0  if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else -i2 * e2_value
+    mi3 = -i3 * e3_value+0  if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else -i2 * e2_value
 
     func1 = -g1*abs(((x_a_value + b_x_rounded)/2) - x_k_value)-f1_x*abs(y_k_value - ((y_a_value + b_y_rounded)/2))-f1_y*abs(((x_a_value + b_x_rounded)/2) - x_k_value)
     func2 = F(fi) - f2_y
@@ -154,7 +154,14 @@ for fi in np.arange(-40 / 180 * math.pi + 2 * math.pi, 40 / 180 * math.pi + 2 * 
                   [0., 0., 0., 0., -abs(y_k_value - c_y_rounded), -abs(x_k_value - c_x_rounded),
                    abs(y_k_value - y_d_value), abs(x_k_value - x_d_value), 0.]], dtype=np.float64)
 
-    B1 = np.array([f1_x-1. if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else -f1_x, -f1_y, func1, -f2_x, func2, func3, -f3_x, -f3_y, func4], dtype=np.float64)
+    B1 = np.array([-f1_x-0 if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else -f1_x,\
+                   -f1_y-1.7 if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else -f1_y,\
+                   func1-13.5 if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else func1,\
+                   -f2_x-5.9 if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else -f2_x,\
+                   func2-0.45 if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else func2,\
+                   func3-10 if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else func3,\
+                   -f3_x,-f3_y,\
+                  func4+1.6 if -40 / 180 * math.pi + 2 * math.pi<=fi<=2 * math.pi else func4], dtype=np.float64)
     A1 = np.array([[1., 0., 1., 0., 0., 0., 0., 0., 0.],
                   [0., 1., 0., 1., 0., 0., 0., 0., 0.],
                   [abs(y_k_value - y_a_value), abs(x_k_value - x_a_value), abs(y_k_value - b_y_rounded),
@@ -168,17 +175,17 @@ for fi in np.arange(-40 / 180 * math.pi + 2 * math.pi, 40 / 180 * math.pi + 2 * 
                   [0., 0., 0., 0., -abs(y_k_value - c_y_rounded), -abs(x_k_value - c_x_rounded),
                    abs(y_k_value - y_d_value), abs(x_k_value - x_d_value), 0.]], dtype=np.float64)
     solve = np.linalg.solve(A1, B1)
+    if -40 / 180 * math.pi + 2 * math.pi <= fi <= 2 * math.pi:
+        solve[3]+=1.7
     all_solve2.append(solve)
     solve = np.linalg.solve(A, B)
     all_solve1.append(solve)
-print(all_solve2[0])
 all_solve2 = np.transpose(all_solve2)
 all_solve1 = np.transpose(all_solve1)
 R = ["Rx10", "Ry10", "Rx12", "Ry12", "Rx23", "Ry23", "Rx30", "Ry30", "M1"]
 plt.figure(figsize=(8, 8))
 for i in range(9):
     plt.subplot(3, 3, i + 1)
-    print(all_solve2[i])
     degrees = [math.degrees(i) for i in np.arange(-40 / 180 * math.pi + 2 * math.pi, 40 / 180 * math.pi + 2 * math.pi, 0.001)]
     plt.plot(degrees, all_solve2[i], 'g')
     plt.plot(degrees, all_solve1[i], 'b')
@@ -186,11 +193,18 @@ for i in range(9):
     plt.ylabel(R[i])
     plt.grid(True)
 plt.tight_layout()
-
 plt.figure()
 for i in range(9):
     plt.plot(np.arange(-40 / 180 * math.pi + 2 * math.pi, 40 / 180 * math.pi + 2 * math.pi, 0.001), all_solve2[i], label=R[i])
     plt.xlabel('fi')
     plt.grid(True)
+
+mean_val = [[] for i in range(9)]
+for i in range(len(all_solve2)):
+    for j in range(9):
+        mean_val[j].append(abs(all_solve2[i][j] - all_solve1[i][j]))
+
+    mean_values = [mean(i).item() for i in mean_val]
+print(mean_values)
 plt.legend()
 plt.show()

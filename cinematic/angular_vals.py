@@ -39,7 +39,7 @@ def main():
     c_value = c_value_func.subs({x_d: x_d_value, x_a: x_a_value, y_d: y_d_value, y_a: y_a_value})
     c_value_degrees = m.degrees(c_value.evalf())
     c_value = c_value.evalf()
-    angles = np.linspace(0, 360, 361)  # Углы от 0 до 360 градусов
+    angles = [m.degrees(i) for i in np.arange(-40 / 180 * m.pi + 2 * m.pi, 40 / 180 * m.pi + 2 * m.pi, 0.001)]  # Углы от 0 до 360 градусов
 
     i = 1.83
     j = 0
@@ -49,8 +49,8 @@ def main():
     accelerations_of_link2 = []
     accelerations_of_link3 = []
 
-    for angle in angles:
-        x_value = np.radians(angle)
+    for angle in np.arange(-40 / 180 * m.pi + 2 * m.pi, 40 / 180 * m.pi + 2 * m.pi, 0.001):
+        x_value = angle
 
         b_x = "x_a + l1 * cos(x)"
         b_y = "y_a - l1 * sin(x)"
